@@ -1,0 +1,8 @@
+.CodeMirror {
+  font-family: "Consolas";
+  font-size: 24px;
+  line-height: 1.6;
+  max-width: calc(100vw - 296px);
+  min-height: 100vh;
+  padding-top: 16px;
+}
