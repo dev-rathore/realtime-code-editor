@@ -18,10 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
-      <ToastContainer
-        position="top-right"
-      />
+      <body className={inter.className}>
+        {children}
+        <ToastContainer
+          pauseOnFocusLoss={false}
+          position="top-right"
+        />
+      </body>
     </html>
   );
 }
