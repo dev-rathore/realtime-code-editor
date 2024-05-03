@@ -98,13 +98,13 @@ const RoomPage: React.FC = () => {
   }
 
   return (
-    <div className="flex bg-dark">
-      <div className="flex flex-col gap-4 min-w-74 pb-8">
+    <div className="flex flex-col md:flex-row bg-dark">
+      <div className="flex flex-col gap-4 min-w-full md:min-w-74 pb-8">
         <div className="p-5 bg-dark text-white">
           <h1 className="text-center font-bold text-2xl">Realtime Code Editor<br /> Playground</h1>
         </div>
         <div className="grow">
-          <div className="grid grid-cols-2 gap-3 p-3">
+          <div className="flex flex-wrap md:grid md:grid-cols-2 gap-3 p-3">
             {editors.map((editor: any) => (
               <UserAvatar
                 key={editor.socketId}
@@ -113,7 +113,7 @@ const RoomPage: React.FC = () => {
             ))}
           </div>
         </div>
-        <div className="flex flex-col items-center gap-5">
+        <div className="flex flex-row md:flex-col justify-center items-center gap-5">
           <Button onClick={copyRoomId}>
             Copy Room ID
           </Button>
@@ -122,7 +122,7 @@ const RoomPage: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="grow">
+      <div className="w-full md:grow">
         <Editor
           socketRef={socketRef}
           roomId={roomId}
