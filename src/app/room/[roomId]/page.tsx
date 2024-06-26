@@ -4,6 +4,7 @@ import Button from "@/components/button";
 import Editor from "@/components/code-editor";
 import UserAvatar from "@/components/user-avatar";
 import { initializeSocket } from "@/socket";
+import getRandomColor from "@/utils/random-color-generator";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -15,9 +16,11 @@ const RoomPage: React.FC = () => {
   const { roomId } = useParams();
 
   const socketRef = useRef<any>(null);
+  const editorBlockRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef(null);
   const router = useRouter();
   const [editors, setEditors] = useState<any>([]);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const init = async () => {
@@ -33,17 +36,21 @@ const RoomPage: React.FC = () => {
 
       socketRef.current.emit(EVENTS.JOIN, {
         roomId,
+        theme: getRandomColor(),
         username: currentUsername,
       });
 
       socketRef.current.on(
         EVENTS.JOINED, ({
           editors,
-          username,
-          socketId
+          socketId,
+          user,
         }: any) => {
-          if (username !== currentUsername) {
-            toast.success(`${username} joined the room`);
+          if (user.username !== currentUsername) {
+            toast.success(`${user.username} joined the room`);
+          }
+          if (user.username === currentUsername) {
+            setUser(user);
           }
           setEditors(editors);
           socketRef.current.emit(EVENTS.SYNC_CODE, {
@@ -56,12 +63,12 @@ const RoomPage: React.FC = () => {
       socketRef.current.on(
         EVENTS.DISCONNECTED, ({
           socketId,
-          username,
+          user,
         }:{
           socketId: string;
-          username: string;
+          user: any;
         }) => {
-          toast.success(`${username} left the room`);
+          toast.success(`${user.username} left the room`);
           setEditors((prev: any) => {
             return prev.filter(
               (editor: any) => editor.socketId !== socketId
@@ -99,7 +106,10 @@ const RoomPage: React.FC = () => {
 
   return (
     <div className="flex flex-col md:flex-row bg-dark">
-      <div className="flex flex-col gap-4 min-w-full md:min-w-74 pb-8">
+      <div      
+        ref={editorBlockRef}
+        className="flex flex-col gap-4 min-w-full md:min-w-74 pb-8"
+      >
         <div className="p-5 bg-dark text-white">
           <h1 className="text-center font-bold text-2xl">Realtime Code Editor<br /> Playground</h1>
         </div>
@@ -108,7 +118,7 @@ const RoomPage: React.FC = () => {
             {editors.map((editor: any) => (
               <UserAvatar
                 key={editor.socketId}
-                username={editor.username}
+                user={editor.user}
               />
             ))}
           </div>
@@ -124,11 +134,14 @@ const RoomPage: React.FC = () => {
       </div>
       <div className="w-full md:grow">
         <Editor
-          socketRef={socketRef}
-          roomId={roomId}
+          currentUsername={currentUsername}
+          editorBlockRef={editorBlockRef}
           onCodeChange={(code: any) => {
             codeRef.current = code;
           }}
+          roomId={roomId}
+          socketRef={socketRef}
+          user={user}
         />
       </div>
     </div>

@@ -3,10 +3,10 @@ import React from "react";
 import getRandomColor from "@/utils/random-color-generator";
 
 const UserAvatar = ({
-  username,
+  user,
   size = 50,
 }: {
-  username: string;
+  user: any;
   size?: number,
 }) => {
   return (
@@ -22,16 +22,16 @@ const UserAvatar = ({
             rounded-full
           "
           style={{
-            backgroundColor: getRandomColor(),
+            backgroundColor: user.theme || getRandomColor(),
             width: size,
             height: size,
           }}
         >
-          {username.split(" ").map((name) => name[0].toUpperCase()).join("")}
+          {user.username.split(" ").map((name: string) => name[0].toUpperCase()).join("")}
         </div>
       </div>
       <div>
-        <p className="text-center text-white text-lg font-medium">{username}</p>
+        <p className="text-center text-white text-lg font-medium">{user.username}</p>
       </div>
     </div>
   );
