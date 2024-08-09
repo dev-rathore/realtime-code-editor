@@ -11,6 +11,10 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 const users = {};
+
+// Takes a room id and returns an array of users in that room
+// io.sockets.adapter.rooms.get(roomId): This retrieves all the socketIds of the users currently connected to the room with the specified roomId.
+// The io.sockets.adapter.rooms object holds information about all the rooms and the socketIds of the users in those rooms.
 const getAllUsersInRoom = (roomId) => {
   return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
     (socketId) => {

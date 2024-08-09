@@ -20,6 +20,7 @@ const RoomPage: React.FC = () => {
   const codeRef = useRef(null);
   const router = useRouter();
   const [editors, setEditors] = useState<any>([]);
+  const [cursors, setCursors] = useState<any[]>([]);
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -73,6 +74,11 @@ const RoomPage: React.FC = () => {
             return prev.filter(
               (editor: any) => editor.socketId !== socketId
             );
+          });
+
+          setCursors((prevCursors: any) => {
+            const updatedCursors = prevCursors.filter((cur: any) => cur.socketId !== socketId);
+            return updatedCursors;
           });
         }
       );
@@ -142,6 +148,8 @@ const RoomPage: React.FC = () => {
           roomId={roomId}
           socketRef={socketRef}
           user={user}
+          cursors={cursors}
+          setCursors={setCursors}
         />
       </div>
     </div>

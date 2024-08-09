@@ -10,11 +10,15 @@ import 'codemirror/addon/edit/closebrackets';
 import './code-editor.styles.css';
 const EVENTS = require('@/socket-events/events.ts');
 
-const Editor = ({ socketRef, roomId, onCodeChange, user }: any) => {
+const Editor = ({
+  socketRef,
+  roomId,
+  onCodeChange,
+  user,
+  cursors,
+  setCursors,
+}: any) => {
   const editorRef = useRef<any>(null);
-  const [cursors, setCursors] = useState<any[]>([]);
-  console.log('cursors:', cursors);
-  console.log('user:', user);
 
   useEffect(() => {
     async function init() {
@@ -82,45 +86,32 @@ const Editor = ({ socketRef, roomId, onCodeChange, user }: any) => {
       }: any) => {
         const currentCursor = editorRef.current.getCursor();
         editorRef.current.setCursor(currentCursor);
-        setCursors((prevCursors) => {
+        setCursors((prevCursors: any) => {
           const updatedCursors = prevCursors.filter((cur: any) => cur.socketId !== socketId);
           updatedCursors.push({ socketId, cursor, cursorCoords, u });
           return updatedCursors;
         });
       });
-
-      socketRef.current.on(
-        EVENTS.DISCONNECTED, ({
-          socketId,
-          user,
-        }:{
-          socketId: string;
-          user: any;
-        }) => {
-          setCursors((prevCursors) => {
-            const updatedCursors = prevCursors.filter((cur: any) => cur.socketId !== socketId);
-            return updatedCursors;
-          });
-        }
-      );
     }
 
     return () => {
       socketRef.current?.off(EVENTS.CURSOR_POSITION_CHANGE);
-      socketRef.current?.off(EVENTS.DISCONNECTED);
     };
   }, [socketRef.current]);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{
+      position: 'relative',
+      overflowX: 'hidden',
+    }}>
       <textarea id="realtime-code-editor" />
-      {cursors.map(({ socketId, cursorCoords, u }) => (
+      {cursors.map(({ socketId, cursorCoords, u }: any) => (
         u.username !== user.username && (
           <div
             key={socketId}
             style={{
               position: 'absolute',
-              top: `${cursorCoords.top + 17}px`,
+              top: `${cursorCoords.top + 29}px`,
               left: `${cursorCoords.left + 30}px`,
             }}
           >
